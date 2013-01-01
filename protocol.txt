@@ -1,0 +1,35 @@
+# General
+1 <nick@address>             Connected
+2 <[disconnect message]>     Disconnected
+3 <message>                  Message
+4                            User list
+5 <new nick>                 Nick change
+6 <nick>                     Whois
+7 <user> <message>           Private message
+9                            Invalid action/parameters
+
+# User modes
+10                           Operator list
+11 <nick>                    Give operator rights
+12 <nick>                    Delete operator rights
+13                           Ban list
+14 <nick>                    Ban users ip
+15 <ip>                      Remove ban
+
+# Errors from server
+20 <min> <max>               Invalid nicknames length
+21                           Invalid characters in nick
+22 <nick>                    Nickname already in use
+23 <nick>                    Whois nick not found
+24 <nick>                    Op/Deop nick not found
+25 <nick>                    Ban/Unban nick not found
+26                           Mode is already set
+27                           You're not an operator
+29                           You're banned
+
+# Errors from client
+30                           Socket initializing failed
+31                           Getting host by name failed
+32                           Connecting to host failed
+33                           Making socket non-blocking failed
+34                           Connection lost
