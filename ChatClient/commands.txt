@@ -3,7 +3,7 @@ Build:
 
 
 Start:
-[ChatClient] [server] [port]
+<ChatClient> <server> <port>
 
 
 Commands:
