@@ -1,7 +1,6 @@
 #ifndef _USERINTERFACE_HPP
 #define _USERINTERFACE_HPP
 
-#include <iostream>
 #include <locale.h>
 #include <thread>
 #include <ncurses.h>

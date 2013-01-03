@@ -27,7 +27,7 @@
 27                           You're not an operator
 29                           You're banned
 
-# Errors from client
+# Local client errors
 30                           Socket initializing failed
 31                           Getting host by name failed
 32                           Connecting to host failed
