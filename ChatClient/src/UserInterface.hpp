@@ -11,15 +11,16 @@
 
 class UserInterface {
 	WINDOW *window;
-	std::thread *inputHandler;
+	std::thread *userInput;
 	public:
 		UserInterface();
 		~UserInterface();
 		void UpdateLog(Log *log);
-		void RunHandleInput(Server *server);
+		void GetUserInput(Server *server);
+		bool UserInputRunning();
 	private:
 		static void HandleInput(Server *server, WINDOW *window);
-		static void HandleInputMessage(Server *server, std::string message);
+		static bool HandleMessage(Server *server, std::string message);
 };
 
 #endif

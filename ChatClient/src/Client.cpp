@@ -14,8 +14,8 @@ Client::~Client() {
 
 void Client::Run() {
 	server->Connect(log);
-	ui->RunHandleInput(server);
-	while(server->IsAlive()) {
+	ui->GetUserInput(server);
+	while(server->IsAlive() && ui->UserInputRunning()) {
 		server->Read(log);
 		ui->UpdateLog(log);
 	}

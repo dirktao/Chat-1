@@ -11,6 +11,9 @@ Commands:
 /ban <nick>
 Ban user
 
+/bans
+List of bans
+
 /deop <nick>
 Remove operator rights from user
 
@@ -31,6 +34,8 @@ Give operator rights to user
 
 /ops
 List of operators
+
+/quit [<message>]
 
 /unban <ip>
 Remove bans

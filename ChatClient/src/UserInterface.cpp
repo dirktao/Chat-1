@@ -9,8 +9,8 @@ UserInterface::UserInterface() {
 }
 
 UserInterface::~UserInterface() {
-	inputHandler->detach();
-	delete inputHandler;
+	userInput->detach();
+	delete userInput;
 	endwin();
 }
 
@@ -32,8 +32,12 @@ void UserInterface::UpdateLog(Log *log) {
 	refresh();
 }
 
-void UserInterface::RunHandleInput(Server *server) {
-	inputHandler = new std::thread(HandleInput, server, this->window);
+void UserInterface::GetUserInput(Server *server) {
+	userInput = new std::thread(HandleInput, server, this->window);
+}
+
+bool UserInterface::UserInputRunning() {
+	return userInput->joinable();
 }
 
 void UserInterface::HandleInput(Server *server, WINDOW *window) {
@@ -44,7 +48,9 @@ void UserInterface::HandleInput(Server *server, WINDOW *window) {
 	getmaxyx(window, winY, winX);
 	move(winY - 1, cursor);
 
-	while(1) {
+	bool active = 1;
+
+	while(active) {
 		int keyPress = getch();
 
 		//if(keyPress >= 32 && keyPress <= 254 && keyPress != 127) {
@@ -56,7 +62,7 @@ void UserInterface::HandleInput(Server *server, WINDOW *window) {
 			switch(keyPress) {
 				case 10: // Enter
 					if(message.size() > 0) {
-						HandleInputMessage(server, message);
+						active = HandleMessage(server, message);
 						cursor = 0;
 						message.clear();
 					}
@@ -66,7 +72,7 @@ void UserInterface::HandleInput(Server *server, WINDOW *window) {
 						--cursor;
 					break;
 				case 261: // Right arrow
-					if(cursor < message.size())
+					if(cursor < (int) message.size())
 						++cursor;
 					break;
 				case 262: // Home
@@ -90,7 +96,7 @@ void UserInterface::HandleInput(Server *server, WINDOW *window) {
 	}
 }
 
-void UserInterface::HandleInputMessage(Server *server, std::string message) {
+bool UserInterface::HandleMessage(Server *server, std::string message) {
 	if(message.substr(0, 1) != "/") {
 		server->Send("3 " + message);
 	}
@@ -109,6 +115,10 @@ void UserInterface::HandleInputMessage(Server *server, std::string message) {
 
 		if(action == "disconnect")
 			server->Send("2" + message);
+		else if(action == "quit") {
+			server->Send("2" + message);
+			return 0;
+		}
 		else if(action == "names")
 			server->Send("4");
 		else if(action == "nick")
@@ -132,4 +142,6 @@ void UserInterface::HandleInputMessage(Server *server, std::string message) {
 		else
 			server->Send(action);
 	}
+
+	return 1;
 }
