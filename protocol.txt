@@ -33,3 +33,4 @@
 32                           Connecting to host failed
 33                           Making socket non-blocking failed
 34                           Connection lost
+35                           Connection closed

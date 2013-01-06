@@ -1,11 +1,16 @@
 #include "UserInterface.hpp"
 
-UserInterface::UserInterface() {
+UserInterface::UserInterface(Log *log, Server *server) {
 	setlocale(LC_ALL, "");
 	window = initscr();
 	raw();
 	keypad(window, 1);
 	noecho();
+
+	this->log = log;
+	this->server = server;
+	logSkip = 0;
+	this->userInputRunning = 1;
 }
 
 UserInterface::~UserInterface() {
@@ -14,14 +19,14 @@ UserInterface::~UserInterface() {
 	endwin();
 }
 
-void UserInterface::UpdateLog(Log *log) {
+void UserInterface::UpdateLog() {
 	int winX, winY;
 	getmaxyx(window, winY, winX);
 
 	int cursorX, cursorY;
 	getyx(window, cursorY, cursorX);
 
-	std::vector<std::string> visibleLines = log->GetLines(winY - 2, winX, 0);
+	std::vector<std::string> visibleLines = log->GetLines(winY - 2, winX, logSkip);
 
 	for(size_t i = 0; i < visibleLines.size(); ++i) {
 		mvaddstr(winY - 2 - i, 0, visibleLines[i].c_str());
@@ -32,15 +37,11 @@ void UserInterface::UpdateLog(Log *log) {
 	refresh();
 }
 
-void UserInterface::GetUserInput(Server *server) {
-	userInput = new std::thread(HandleInput, server, this->window);
+void UserInterface::GetUserInput() {
+	userInput = new std::thread(HandleInput, server, window, &logSkip, &userInputRunning);
 }
 
-bool UserInterface::UserInputRunning() {
-	return userInput->joinable();
-}
-
-void UserInterface::HandleInput(Server *server, WINDOW *window) {
+void UserInterface::HandleInput(Server *server, WINDOW *window, int *logSkip, bool *userInputRunning) {
 	std::string message("");
 	int cursor = 0;
 
@@ -50,7 +51,7 @@ void UserInterface::HandleInput(Server *server, WINDOW *window) {
 
 	bool active = 1;
 
-	while(active) {
+	while(active && *userInputRunning) {
 		int keyPress = getch();
 
 		//if(keyPress >= 32 && keyPress <= 254 && keyPress != 127) {
@@ -82,6 +83,12 @@ void UserInterface::HandleInput(Server *server, WINDOW *window) {
 					if(cursor > 0)
 						message.erase(--cursor, 1);
 					break;
+				case 338: // Page down
+					*logSkip -= 1;
+					break;
+				case 339: // Page up
+					*logSkip += 1;
+					break;
 				case 360: // End
 					cursor = message.size();
 					break;
@@ -94,6 +101,8 @@ void UserInterface::HandleInput(Server *server, WINDOW *window) {
 		move(winY - 1, cursor);
 		refresh();
 	}
+
+	*userInputRunning = 0;
 }
 
 bool UserInterface::HandleMessage(Server *server, std::string message) {
@@ -113,7 +122,12 @@ bool UserInterface::HandleMessage(Server *server, std::string message) {
 			message.erase(0, action.size());
 		}
 
-		if(action == "disconnect")
+		if(action == "connect") {
+			if(server->IsAlive())
+				server->Disconnect();
+			server->Connect();
+		}
+		else if(action == "disconnect")
 			server->Send("2" + message);
 		else if(action == "quit") {
 			server->Send("2" + message);

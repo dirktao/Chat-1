@@ -6,6 +6,8 @@
 #include <string>
 #include <vector>
 
+#include "Debug.hpp"
+
 class Log {
 	std::vector<std::string> list;
 	size_t maxSize;
@@ -14,6 +16,8 @@ class Log {
 		void Add(std::string message);
 		void Clear();
 		std::vector<std::string> GetLines(int quantity, int width, int skipLines);
+	private:
+		std::vector<std::string> SplitLine(int line, int width);
 };
 
 #endif

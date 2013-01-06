@@ -1,6 +1,7 @@
 #include "Server.hpp"
 
-Server::Server(const char *host, int port) {
+Server::Server(Log *log, const char *host, int port) {
+	this->log = log;
 	this->host = host;
 	this->port = port;
 	this->sock = -1;
@@ -11,7 +12,7 @@ Server::~Server() {
 		this->Disconnect();
 }
 
-void Server::Connect(Log *log) {
+void Server::Connect() {
 	if((sock = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
 		sock = -1;
 		log->Add("30");
@@ -65,7 +66,7 @@ bool Server::Send(std::string message) {
 	return 1;
 }
 
-void Server::Read(Log *log) {
+void Server::Read() {
 	fd_set fdSelect = fdSet;
 	if(select(fdMax + 1, &fdSelect, NULL, NULL, NULL) == -1)
 		this->Disconnect();
@@ -79,10 +80,11 @@ void Server::Read(Log *log) {
 
 		char charBuffer[4096];
 		ssize_t received = 0;
-		std::string origBuffer = buffer;
 
-		while((received = recv(sock, charBuffer, sizeof(charBuffer), 0)) > 0)
+		while((received = recv(sock, charBuffer, sizeof(charBuffer), 0)) > 0) {
 			buffer += std::string(charBuffer, received);
+			memset(charBuffer, 0, 4096);
+		}
 
 		for(size_t messageFind = buffer.find("\n"); messageFind != std::string::npos; messageFind = buffer.find("\n")) {
 			std::string message = buffer.substr(0, messageFind);
@@ -94,5 +96,10 @@ void Server::Read(Log *log) {
 
 void Server::Disconnect() {
 	close(sock);
-	sock = -1;
+	if(sock == -1)
+		log->Add("36");
+	else {
+		sock = -1;
+		log->Add("35");
+	}
 }

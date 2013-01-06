@@ -2,8 +2,8 @@
 
 Client::Client(const char *host, int port) {
 	log = new Log(0);
-	ui = new UserInterface();
-	server = new Server(host, port);
+	server = new Server(log, host, port);
+	ui = new UserInterface(log, server);
 }
 
 Client::~Client() {
@@ -13,10 +13,13 @@ Client::~Client() {
 }
 
 void Client::Run() {
-	server->Connect(log);
-	ui->GetUserInput(server);
-	while(server->IsAlive() && ui->UserInputRunning()) {
-		server->Read(log);
-		ui->UpdateLog(log);
+	server->Connect();
+	ui->GetUserInput();
+	while(ui->userInputRunning) {
+		if(server->IsAlive())
+			server->Read();
+		else
+			usleep(1000);
+		ui->UpdateLog();
 	}
 }

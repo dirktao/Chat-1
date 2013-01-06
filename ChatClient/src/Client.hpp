@@ -1,6 +1,8 @@
 #ifndef _CLIENT_HPP
 #define _CLIENT_HPP
 
+#include <unistd.h>
+
 #include "Log.hpp"
 #include "Server.hpp"
 #include "UserInterface.hpp"

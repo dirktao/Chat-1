@@ -24,15 +24,16 @@ class Server {
 	fd_set fdSet;
 	int fdMax;
 	std::string buffer;
+	Log *log;
 	public:
 		const char *host;
 		int port;
-		Server(const char *host, int port);
+		Server(Log *log, const char *host, int port);
 		~Server();
-		void Connect(Log *log);
+		void Connect();
 		bool IsAlive();
 		bool Send(std::string message);
-		void Read(Log *log);
+		void Read();
 		void Disconnect();
 };
 

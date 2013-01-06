@@ -1,0 +1,6 @@
+Prefix for default nick
+Suffix for default nick
+Amount of random numbers in default nick
+Minimum length of nick
+Maximum length of nick
+Allowed characters in nick regex

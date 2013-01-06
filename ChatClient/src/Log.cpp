@@ -121,6 +121,15 @@ void Log::Add(std::string message) {
 			case 34:
 				message = "Lost connection to server";
 				break;
+			case 35:
+				message = "Connection closed";
+				break;
+			case 36:
+				message = "No connection to server";
+				break;
+			default:
+				message = "Invalid command \"" + action + " " + message + "\"";
+				break;
 		}
 
 		time_t rawTime;
@@ -130,6 +139,7 @@ void Log::Add(std::string message) {
 		strftime(timestamp, 9, "[%H:%M] ", timeInfo);
 
 		list.push_back(timestamp + message);
+		Debug::AddLine(timestamp + message);
 		while(list.size() > maxSize && maxSize > 0)
 			list.erase(list.begin());
 	}
@@ -141,34 +151,39 @@ void Log::Clear() {
 
 std::vector<std::string> Log::GetLines(int quantity, int width, int skipLines) {
 	std::vector<std::string> lines;
+	std::vector<std::string> buffer;
 
-	if(skipLines > (int) list.size() - quantity) {
-		skipLines = (int) list.size() - quantity;
-		if(skipLines > (int) list.size() || skipLines < 0)
+	if((int) list.size() - quantity - skipLines <= 0) {
+		if((int) list.size() > quantity)
+			skipLines = list.size() - quantity;
+		else
 			skipLines = 0;
 	}
 
-	std::vector<std::string> buffer;
 	int firstLine = list.size() - 1 - skipLines;
 	int lastLine = list.size() - 1 - skipLines - quantity;
 	if(lastLine < 0)
 		lastLine = 0;
 
 	for(int line = firstLine; line >= lastLine; --line) {
-		buffer.clear();
-		buffer.push_back(list[line]);
-
-		while((int) buffer[buffer.size() - 1].size() > width) {
-			buffer.push_back(buffer[buffer.size() - 1].substr(width, buffer[buffer.size() - 1].size() - width));
-			buffer[buffer.size() - 2] = buffer[buffer.size() - 2].substr(0, width);
-		}
-
-		for(int i = buffer.size() - 1; i >= 0; --i)
-			lines.push_back(buffer[i]);
+		buffer = SplitLine(line, width);
+		lines.reserve(lines.size() + buffer.size());
+		lines.insert(lines.end(), buffer.begin(), buffer.end());
 	}
 
 	while((int) lines.size() > quantity)
 		lines.erase(lines.begin());
 
 	return lines;
+}
+
+std::vector<std::string> Log::SplitLine(int line, int width) {
+	std::vector<std::string> split(1, list[line]);
+
+	while((int) split.back().size() > width) {
+		split.push_back(split.back().substr(width, split.back().size() - width));
+		split[split.size() - 2] = split[split.size() - 2].substr(0, width);
+	}
+
+	return split;
 }

@@ -10,15 +10,18 @@
 
 class UserInterface {
 	WINDOW *window;
+	Log *log;
+	int logSkip;
+	Server *server;
 	std::thread *userInput;
 	public:
-		UserInterface();
+		bool userInputRunning;
+		UserInterface(Log *log, Server *server);
 		~UserInterface();
-		void UpdateLog(Log *log);
-		void GetUserInput(Server *server);
-		bool UserInputRunning();
+		void UpdateLog();
+		void GetUserInput();
 	private:
-		static void HandleInput(Server *server, WINDOW *window);
+		static void HandleInput(Server *server, WINDOW *window, int *logSkip, bool *userInputRunning);
 		static bool HandleMessage(Server *server, std::string message);
 };
 
