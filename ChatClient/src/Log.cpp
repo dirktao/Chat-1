@@ -150,6 +150,10 @@ void Log::Clear() {
 
 std::vector<std::string> Log::GetLines(int quantity, int width, int skipLines) {
 	std::vector<std::string> lines;
+
+	if(quantity <= 0 || width <= 0)
+		return lines;
+
 	std::vector<std::string> buffer;
 
 	if((int) list.size() - quantity - skipLines <= 0) {
@@ -179,10 +183,8 @@ std::vector<std::string> Log::GetLines(int quantity, int width, int skipLines) {
 std::vector<std::string> Log::SplitLine(int line, int width) {
 	std::vector<std::string> split(1, list[line]);
 
-	while((int) split.front().size() > width) {
+	while((int) split.front().size() > width)
 		split.insert(split.begin(), split.front().substr(width, split.front().size() - width));
-		//split[1] = split[1].substr(0, width);
-	}
 
 	return split;
 }

@@ -28,8 +28,11 @@ void UserInterface::UpdateLog() {
 
 	std::vector<std::string> visibleLines = log->GetLines(winY - 1, winX, logSkip);
 
-	for(size_t i = 0; i < visibleLines.size(); ++i) {
-		mvaddstr(winY - 2 - i, 0, visibleLines[i].c_str());
+	for(size_t i = 0; i < winY - 1; ++i) {
+		if(i < visibleLines.size())
+			mvaddstr(winY - 2 - i, 0, visibleLines[i].c_str());
+		else
+			move(winY - 2 - i, 0);
 		clrtoeol();
 	}
 
@@ -38,10 +41,10 @@ void UserInterface::UpdateLog() {
 }
 
 void UserInterface::GetUserInput() {
-	userInput = new std::thread(HandleInput, server, window, &logSkip, &userInputRunning);
+	userInput = new std::thread(HandleInput, log, server, window, &logSkip, &userInputRunning);
 }
 
-void UserInterface::HandleInput(Server *server, WINDOW *window, int *logSkip, bool *userInputRunning) {
+void UserInterface::HandleInput(Log *log, Server *server, WINDOW *window, int *logSkip, bool *userInputRunning) {
 	std::string message("");
 	int cursor = 0;
 
@@ -63,7 +66,7 @@ void UserInterface::HandleInput(Server *server, WINDOW *window, int *logSkip, bo
 			switch(keyPress) {
 				case 10: // Enter
 					if(message.size() > 0) {
-						active = HandleMessage(server, message);
+						active = HandleMessage(log, server, message);
 						cursor = 0;
 						message.clear();
 					}
@@ -105,7 +108,7 @@ void UserInterface::HandleInput(Server *server, WINDOW *window, int *logSkip, bo
 	*userInputRunning = 0;
 }
 
-bool UserInterface::HandleMessage(Server *server, std::string message) {
+bool UserInterface::HandleMessage(Log *log, Server *server, std::string message) {
 	if(message.substr(0, 1) != "/") {
 		server->Send("3 " + message);
 	}
@@ -153,6 +156,8 @@ bool UserInterface::HandleMessage(Server *server, std::string message) {
 			server->Send("14" + message);
 		else if(action == "unban")
 			server->Send("15" + message);
+		else if(action == "clear")
+			log->Clear();
 		else
 			server->Send(action);
 	}

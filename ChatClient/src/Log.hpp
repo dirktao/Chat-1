@@ -6,8 +6,6 @@
 #include <string>
 #include <vector>
 
-#include "Debug.hpp"
-
 class Log {
 	std::vector<std::string> list;
 	size_t maxSize;

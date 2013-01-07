@@ -21,8 +21,8 @@ class UserInterface {
 		void UpdateLog();
 		void GetUserInput();
 	private:
-		static void HandleInput(Server *server, WINDOW *window, int *logSkip, bool *userInputRunning);
-		static bool HandleMessage(Server *server, std::string message);
+		static void HandleInput(Log *log, Server *server, WINDOW *window, int *logSkip, bool *userInputRunning);
+		static bool HandleMessage(Log *log, Server *server, std::string message);
 };
 
 #endif
