@@ -19,7 +19,7 @@ void Client::Run() {
 		if(server->IsAlive())
 			server->Read();
 		else
-			usleep(1000);
+			usleep(10000);
 		ui->UpdateLog();
 	}
 }

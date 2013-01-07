@@ -26,7 +26,7 @@ void UserInterface::UpdateLog() {
 	int cursorX, cursorY;
 	getyx(window, cursorY, cursorX);
 
-	std::vector<std::string> visibleLines = log->GetLines(winY - 2, winX, logSkip);
+	std::vector<std::string> visibleLines = log->GetLines(winY - 1, winX, logSkip);
 
 	for(size_t i = 0; i < visibleLines.size(); ++i) {
 		mvaddstr(winY - 2 - i, 0, visibleLines[i].c_str());
