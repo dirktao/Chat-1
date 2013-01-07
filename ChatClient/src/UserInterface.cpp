@@ -28,8 +28,8 @@ void UserInterface::UpdateLog() {
 
 	std::vector<std::string> visibleLines = log->GetLines(winY - 1, winX, logSkip);
 
-	for(size_t i = 0; i < (size_t) winY - 1; ++i) {
-		if(i < visibleLines.size())
+	for(int i = 0; i < winY - 1; ++i) {
+		if(i < (int) visibleLines.size())
 			mvaddstr(winY - 2 - i, 0, visibleLines[i].c_str());
 		else
 			move(winY - 2 - i, 0);
