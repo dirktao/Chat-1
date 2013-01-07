@@ -139,7 +139,6 @@ void Log::Add(std::string message) {
 		strftime(timestamp, 9, "[%H:%M] ", timeInfo);
 
 		list.push_back(timestamp + message);
-		Debug::AddLine(timestamp + message);
 		while(list.size() > maxSize && maxSize > 0)
 			list.erase(list.begin());
 	}
@@ -161,7 +160,7 @@ std::vector<std::string> Log::GetLines(int quantity, int width, int skipLines) {
 	}
 
 	int firstLine = list.size() - 1 - skipLines;
-	int lastLine = list.size() - 1 - skipLines - quantity;
+	int lastLine = list.size() - skipLines - quantity;
 	if(lastLine < 0)
 		lastLine = 0;
 
@@ -172,7 +171,7 @@ std::vector<std::string> Log::GetLines(int quantity, int width, int skipLines) {
 	}
 
 	while((int) lines.size() > quantity)
-		lines.erase(lines.begin());
+		lines.erase(lines.end());
 
 	return lines;
 }
@@ -180,9 +179,9 @@ std::vector<std::string> Log::GetLines(int quantity, int width, int skipLines) {
 std::vector<std::string> Log::SplitLine(int line, int width) {
 	std::vector<std::string> split(1, list[line]);
 
-	while((int) split.back().size() > width) {
-		split.push_back(split.back().substr(width, split.back().size() - width));
-		split[split.size() - 2] = split[split.size() - 2].substr(0, width);
+	while((int) split.front().size() > width) {
+		split.insert(split.begin(), split.front().substr(width, split.front().size() - width));
+		//split[1] = split[1].substr(0, width);
 	}
 
 	return split;
