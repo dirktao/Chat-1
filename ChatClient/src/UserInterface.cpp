@@ -8,8 +8,8 @@ UserInterface::UserInterface(Log *log, Server *server) {
 	noecho();
 
 	this->log = log;
+	this->logSkip = 0;
 	this->server = server;
-	logSkip = 0;
 	this->userInputRunning = 1;
 }
 
@@ -28,7 +28,7 @@ void UserInterface::UpdateLog() {
 
 	std::vector<std::string> visibleLines = log->GetLines(winY - 1, winX, logSkip);
 
-	for(size_t i = 0; i < winY - 1; ++i) {
+	for(size_t i = 0; i < (size_t) winY - 1; ++i) {
 		if(i < visibleLines.size())
 			mvaddstr(winY - 2 - i, 0, visibleLines[i].c_str());
 		else
