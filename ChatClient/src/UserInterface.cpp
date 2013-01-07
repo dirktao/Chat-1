@@ -28,11 +28,11 @@ void UserInterface::UpdateLog() {
 
 	std::vector<std::string> visibleLines = log->GetLines(winY - 1, winX, logSkip);
 
-	for(int i = 0; i < winY - 1; ++i) {
-		if(i < (int) visibleLines.size())
-			mvaddstr(winY - 2 - i, 0, visibleLines[i].c_str());
+	for(int line = 0; line < winY - 1; ++line) {
+		if(line < (int) visibleLines.size())
+			mvaddstr(winY - 2 - line, 0, visibleLines[line].c_str());
 		else
-			move(winY - 2 - i, 0);
+			move(winY - 2 - line, 0);
 		clrtoeol();
 	}
 
