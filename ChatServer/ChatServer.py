@@ -118,6 +118,12 @@ class ChatServer:
 				self.Send(sock, "6 " + self.sockList[whois][2] + "@" + self.sockList[whois][1])
 			else:
 				self.Send(sock, "23 " + message)
+		elif action == "7":
+			userSock = self.SearchNick(message[:message.find(" ")])
+			if userSock <> None:
+				self.Send(userSock, message[message.find(" ") + 1:])
+			else:
+				pass # send error code
 		elif action == "10":
 			operators = "10"
 			for operator in self.operatorList:

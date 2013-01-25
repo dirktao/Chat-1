@@ -1,10 +1,10 @@
 # General
 
 Connected
-  Server
-    1 <nick>@<host>
   Client
     None
+  Server
+    1 <nick>@<host>
 
 Disconnected
   Server
@@ -13,22 +13,22 @@ Disconnected
     2 <[message]>
 
 Public message
-  Server
-    3 <<[operator]><nick>> <message>
   Client
     3 <message>
+  Server
+    3 <<[operator]><nick>> <message>
 
 User list
-  Server
-    4 <nick> ...
   Client
     4
+  Server
+    4 <nick> ...
 
 Nick change
-  Server
-    5 <old> <new>
   Client
     5 <nick>
+  Server
+    5 <old> <new>
 
 Whois
   Server
@@ -37,42 +37,116 @@ Whois
     6 <nick>
 
 Private message
-  Server
-    7 <nick> <message>
   Client
+    7 <nick> <message>
+  Server
     7 <nick> <message>
 
 Invalid action/Invalid parameters
   Server
     9 <[message]>
+
+
+# User modes
+
+Operator list
   Client
-    None
+    10
+  Server
+    10 [<nick>] ...
 
--Rewrite all below-
+Give operator rights
+  Client
+    11 <nick>
+  Server
+    11 <nick> <op nick>
 
-  # User modes
-    10                           Operator list
-    11 <nick>                    Give operator rights
-    12 <nick>                    Delete operator rights
-    13                           Ban list
-    14 <nick>                    Ban users ip
-    15 <ip>                      Remove ban
+Delete operator rights
+  Client
+    12 <nick>
+  Server
+    12 <nick> <op nick>
 
-  # Errors from server
-    20 <min> <max>               Invalid nicknames length
-    21                           Invalid characters in nick
-    22 <nick>                    Nickname already in use
-    23 <nick>                    Whois nick not found
-    24 <nick>                    Op/Deop nick not found
-    25 <nick>                    Ban/Unban nick not found
-    26                           Mode is already set
-    27                           You're not an operator
-    29                           You're banned
+Ban list
+  Client
+    13
+  Server
+    13 [<nick>] ...
 
-  # Local client errors
-    30                           Socket initializing failed
-    31                           Getting host by name failed
-    32                           Connecting to host failed
-    33                           Making socket non-blocking failed
-    34                           Connection lost
-    35                           Connection closed
+Ban users ip
+  Client
+    14 <nick>
+  Server
+    14 <nick>@<host> <op nick>
+
+Remove ban
+  Client
+    15 <host>
+  Server
+    15 <host> <nick>
+
+
+# Errors
+
+Invalid nicknames length
+  Server
+    20 <min> <max>
+
+Invalid characters in nick
+  Server
+    21
+
+Nickname already in use
+  Server
+    22 <nick>
+
+Whois nick not found
+  Server
+    23 <nick>
+
+Op/Deop nick not found
+  Server
+    24 <nick>
+
+Ban/Unban nick not found
+  Server
+    25 <nick>
+
+Mode is already set
+  Server
+    26
+
+You're not an operator
+  Server
+    27
+
+You're banned
+  Server
+    29
+
+
+# Local errors (In ChatClient only)
+
+Socket initializing failed
+  Client
+    30
+
+Getting host by name failed
+  Client
+    31
+
+Connecting to host failed
+  Client
+    32
+
+Making socket non-blocking failed
+  Client
+    33
+
+Connection lost
+  Client
+    34
+
+Connection closed
+  Client
+    35
