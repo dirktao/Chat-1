@@ -1,2 +1,0 @@
-Crash when KEY_RESIZE
-Lack of special characters
