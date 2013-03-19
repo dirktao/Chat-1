@@ -150,3 +150,7 @@ Connection lost
 Connection closed
   Client
     35
+
+No connection to server
+  Client
+    36
